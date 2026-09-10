@@ -87,6 +87,14 @@ win:
       to: branding/wechat-qr.png
     - from: resources/icon.png
       to: branding/icon.png
+    - from: resources/icon.ico
+      to: branding/icon.ico
+    - from: resources/icon.ico
+      to: icon.ico
+    - from: resources/icon.png
+      to: icon.png
+    - from: resources/tray-icon.png
+      to: tray-icon.png
 
 mac:
   icon: resources/icon.icns

@@ -263,6 +263,10 @@ if (isDev) {
 }
 
 const hasSingleInstanceLock = isDev || app.requestSingleInstanceLock();
+// Windows taskbar / jump list: must match electron-builder appId so the fox icon sticks
+if (process.platform === 'win32') {
+  app.setAppUserModelId('com.qinghong.qhcode');
+}
 if (!hasSingleInstanceLock) {
   logWarn('[App] Another instance is already running, quitting this instance');
   app.quit();
@@ -367,13 +371,23 @@ function setupTray() {
     ? join(process.resourcesPath, iconName)
     : join(__dirname, '../../resources', iconName);
 
-  // On Windows, fall back to .png if the .ico file has not been created yet
-  const resolvedIconPath =
-    process.platform === 'win32' && !fs.existsSync(iconPath)
-      ? app.isPackaged
-        ? join(process.resourcesPath, 'tray-icon.png')
-        : join(__dirname, '../../resources', 'tray-icon.png')
-      : iconPath;
+  // On Windows, fall back through fox branding assets if tray ico is missing
+  const resolvedIconPath = (() => {
+    if (fs.existsSync(iconPath)) return iconPath;
+    const fallbacks = app.isPackaged
+      ? [
+          join(process.resourcesPath, 'tray-icon.png'),
+          join(process.resourcesPath, 'branding', 'icon.ico'),
+          join(process.resourcesPath, 'branding', 'icon.png'),
+          join(process.resourcesPath, 'icon.png'),
+        ]
+      : [
+          join(__dirname, '../../resources', 'tray-icon.png'),
+          join(__dirname, '../../resources', 'icon.ico'),
+          join(__dirname, '../../resources', 'icon.png'),
+        ];
+    return fallbacks.find((p) => fs.existsSync(p)) || iconPath;
+  })();
 
   // Gracefully skip tray if icon is missing (e.g. dev environment)
   if (!fs.existsSync(resolvedIconPath)) {
@@ -451,6 +465,30 @@ function applyNativeThemePreference(theme: AppTheme): void {
   nativeTheme.themeSource = theme;
 }
 
+function resolveAppIconPath(): string | undefined {
+  const isMac = process.platform === 'darwin';
+  const isWindows = process.platform === 'win32';
+  const primary = isMac ? 'icon.icns' : isWindows ? 'icon.ico' : 'icon.png';
+  const candidates = app.isPackaged
+    ? [
+        join(process.resourcesPath, primary),
+        join(process.resourcesPath, 'branding', 'icon.ico'),
+        join(process.resourcesPath, 'branding', 'icon.png'),
+        join(process.resourcesPath, 'icon.png'),
+      ]
+    : [
+        join(__dirname, '../../resources', primary),
+        join(__dirname, '../../resources/icon.png'),
+      ];
+  for (const candidate of candidates) {
+    if (fs.existsSync(candidate)) {
+      return candidate;
+    }
+  }
+  logWarn('[App] No window icon found; Windows may show the default Electron icon');
+  return undefined;
+}
+
 function createWindow() {
   const savedTheme = getSavedThemePreference();
   applyNativeThemePreference(savedTheme);
@@ -479,12 +517,7 @@ function createWindow() {
     minWidth: 800,
     minHeight: 600,
     backgroundColor: THEME.background,
-    icon: (() => {
-      const windowIconName = isMac ? 'icon.icns' : isWindows ? 'icon.ico' : 'icon.png';
-      return app.isPackaged
-        ? join(process.resourcesPath, windowIconName)
-        : join(__dirname, `../../resources/${windowIconName}`);
-    })(),
+    icon: resolveAppIconPath(),
     webPreferences: {
       preload: join(__dirname, '../preload/index.js'),
       nodeIntegration: false,
