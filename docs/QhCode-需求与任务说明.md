@@ -3,7 +3,7 @@
 > 基于 Open Cowork 二次封装的桌面 AI 助手  
 > 品牌：**QhCode**（晴红出品）  
 > 源码目录：`C:\dev\open-cowork`  
-> 文档更新日期：2026-09-10（**当前发版 v1.0.2**；今晚计划打 Mac M）
+> 文档更新日期：2026-09-10（**当前发版 v1.0.3**；今晚计划打 Mac M）
 
 ---
 
@@ -24,7 +24,7 @@
 ### 产品目标
 | 优先级 | 目标 | 状态 |
 |--------|------|------|
-| P0 | Windows 桌面 App（exe），双击可用 | **已出 v1.0.2** |
+| P0 | Windows 桌面 App（exe），双击可用 | **已出 v1.0.3** |
 | P0 | GUI 填大模型 API Key + 资讯 Key + 行情 Key | 大模型 + MCP 双连接器可用；OpenAI 页可改 Base URL |
 | P0 | API 设置可选推荐晴红中转站（不锁死） | **已完成** |
 | P0 | 预置 MCP / Skills，欢迎页快捷场景 | **资讯 + 行情均已完成** |
@@ -147,12 +147,13 @@
 - [x] 关闭指向上游 Open Cowork 的自动更新；改为本仓 GitHub Releases
 - [x] **Gitee 公开仓（代码，国内）**：https://gitee.com/liudong59/qhcode
 - [x] **GitHub 公开仓（代码 + 安装包）**：https://github.com/liudong317/qhcode
-- [x] **v1.0.2 安装包**（保留；已删旧版）：`QhCode-1.0.2-win-x64.exe`
-  - 本机：`E:\文件\QhCode-1.0.2-win-x64.exe`
-  - 工程：`C:\dev\open-cowork\release\QhCode-1.0.2-win-x64.exe`
-  - 下载：https://github.com/liudong317/qhcode/releases/tag/v1.0.2
+- [x] **v1.0.3 安装包**（保留；已删旧版）：`QhCode-1.0.3-win-x64.exe`
+  - 本机：`E:\文件\QhCode-1.0.3-win-x64.exe`
+  - 工程：`C:\dev\open-cowork\release\QhCode-1.0.3-win-x64.exe`
+  - 下载：https://github.com/liudong317/qhcode/releases/tag/v1.0.3
 - [x] v1.0.1：任务栏狐狸图标
 - [x] v1.0.2：保存设置不再把自定义 Base URL 改回 `api.openai.com`
+- [x] v1.0.3：Windows 重打包发版（当前推荐安装此版）
 
 ### 进行中 / 今晚
 - [ ] **macOS Apple Silicon（M）安装包**（今晚回家做，见第六节）
@@ -252,7 +253,7 @@
 
 ## 九、开箱体验（购后）
 
-1. 安装 [QhCode-1.0.1-win-x64.exe](https://github.com/liudong317/qhcode/releases/tag/v1.0.1) → 打开（软件免费）  
+1. 安装 [QhCode-1.0.3-win-x64.exe](https://github.com/liudong317/qhcode/releases/tag/v1.0.3) → 打开（软件免费）  
 2. **设置 → API**：选提供商 → 填 Key + **可改的 Base URL** → 保存（可选：一键填入晴红示例，仍可改）  
 3. **设置 → MCP 连接器**：资讯 Key + 行情 Key 并启用  
 4. 卡壳 → **设置 → 帮助** 微信 `ziyouxiaoqi123`
@@ -266,7 +267,7 @@
 | 项 | 值 |
 |----|-----|
 | 底座 | Open Cowork 3.x（MIT） |
-| 当前版本 | **1.0.2** |
+| 当前版本 | **1.0.3** |
 | 开发 | `cd C:\dev\open-cowork && npm run dev` |
 | 开发端口 | `http://localhost:6173` |
 | 打 Win 包 | `npm run build:win` |
@@ -276,7 +277,7 @@
 | 资讯 / 行情 MCP | `qinghong-finance-server.ts` / `qinghong-market-server.ts` |
 | 飞书用户文档 | `E:\文件\QhCode-飞书文档.md` · 仓库 `docs/QhCode-飞书文档.md` |
 | Gitee / GitHub | 见第七节 |
-| 当前 Win Release | https://github.com/liudong317/qhcode/releases/tag/v1.0.2 |
+| 当前 Win Release | https://github.com/liudong317/qhcode/releases/tag/v1.0.3 |
 
 ---
 
@@ -293,7 +294,7 @@
 
 1. **M1（完成）**：品牌 + 文档 + 资讯 MCP + 帮助页/中转站 + 免费策略  
 2. **M2（完成）**：行情 MCP + Win 安装包 + 双仓 + Releases  
-3. **M2.1（完成）**：v1.0.1 狐狸图标 · v1.0.2 Base URL 保存修复  
+3. **M2.1（完成）**：v1.0.1 狐狸图标 · v1.0.3 Base URL 保存修复  
 4. **M3（今晚）**：**macOS arm64（M 芯片）**  
 5. **M4**：检查更新验证 + 体积压缩 + 购后完善  
 6. **M5**：资讯×行情联合 + 飞书远程开箱  
@@ -309,7 +310,7 @@
 | 微信 | ziyouxiaoqi123 |
 | 晴红中转站 | [https://www.qinghong.tech/](https://www.qinghong.tech/)（可选，不强制） |
 | 资讯 / 行情 API | 见第三节 |
-| QhCode 下载（Win） | [Releases v1.0.2](https://github.com/liudong317/qhcode/releases/tag/v1.0.2) |
+| QhCode 下载（Win） | [Releases v1.0.3](https://github.com/liudong317/qhcode/releases/tag/v1.0.3) |
 | QhCode | 免费桌面入口；变现靠 Key + 私域 |
 
 数据供学习复盘，不构成投资建议；据此操作风险自担。
