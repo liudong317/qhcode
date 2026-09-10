@@ -41,20 +41,18 @@
 
 ### 第 1 步：配置大模型（必做，否则不能对话）
 
-1. 打开 QhCode → 左下角或菜单进入 **设置 → API 设置**
-2. 页面上方有「QhCode 免费 · 推荐晴红中转站」：
-   - 点 **打开晴红中转站** → 注册 / 充值 → 复制你的 API Key
-   - 回到软件，点 **一键填入推荐配置**（会自动填好 Base URL）
-3. 把中转站里的 **Key 粘贴**到密钥框 → **保存**
-4. （可选）点测试，确认能连上
+1. 打开 QhCode → **设置 → API 设置**
+2. **任意厂商都可以**，不绑死某一家：
+   - 点 **OpenAI**：填 **API 密钥** + **基础 URL（Base URL）** + 模型名  
+   - 或点 **更多模型**：选协议（OpenAI 兼容）后同样可改 Base URL  
+   - 也可用 Anthropic / Gemini / OpenRouter / Ollama 等
+3. （可选）顶部有「晴红中转站」**示例一键填入**：只是方便试用，填入后地址**仍可修改**，也可完全不用
+4. 粘贴你的 Key → **保存设置**
 
-**推荐配置说明：**
-
-- 协议：OpenAI 兼容  
-- Base URL：`https://www.qinghong.tech/v1`  
-- 官网：https://www.qinghong.tech/
-
-> 也可以用其他兼容接口（DeepSeek、自建中转等），不强制中转站。
+**说明：**
+- Base URL 可填官方地址，也可填任意中转站 / 自建兼容接口  
+- 示例中转站官网：https://www.qinghong.tech/（可选，非强制）  
+- 示例 Base URL：`https://www.qinghong.tech/v1`（可改）
 
 ---
 
@@ -168,7 +166,8 @@ A：当前先发 Windows 版；Mac（M 芯片）后续再出。
 
 ```
 1. 下载安装：GitHub Releases → QhCode-xxx-win-x64.exe
-2. 设置 → API → 打开中转站 + 一键填入 → 粘大模型 Key → 保存
+2. 设置 → API → 选提供商 → 填 Key + Base URL（可改，不写死）→ 保存
+   （可选：一键填入晴红示例，仍可改地址）
 3. 设置 → MCP → 晴红资讯：贴资讯 Key → 启用
 4. 设置 → MCP → 晴红行情：贴行情 Key → 启用
 5. 回欢迎页，说话或点快捷按钮开始用

@@ -1274,7 +1274,8 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
       }),
     });
     dispatch({ type: 'SET_ACTIVE_PROFILE_KEY', payload: nextProfileKey });
-  }, []);
+    showSuccessKey('api.relay.applied');
+  }, [showSuccessKey]);
 
   const toggleCustomModel = useCallback(() => {
     updateActiveProfile((prev) => {

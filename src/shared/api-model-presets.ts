@@ -73,7 +73,7 @@ export const API_PROVIDER_PRESETS: SharedProviderPresets = {
       { id: 'o4-mini', name: 'o4-mini' },
     ],
     keyPlaceholder: 'sk-...',
-    keyHint: '从 platform.openai.com 获取',
+    keyHint: 'Key 来自任意 OpenAI 兼容服务（官方 / 中转站 / 自建均可）；下方可改 Base URL',
   },
   gemini: {
     name: 'Gemini',

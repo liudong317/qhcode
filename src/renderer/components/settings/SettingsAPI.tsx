@@ -261,7 +261,7 @@ export function SettingsAPI() {
         </div>
       )}
 
-      {(provider === 'custom' || provider === 'ollama') && (
+      {(provider === 'custom' || provider === 'ollama' || provider === 'openai') && (
         <div className="space-y-3 py-5 border-b border-border-muted">
           <div className="flex items-center justify-between gap-2">
             <label
@@ -295,7 +295,7 @@ export function SettingsAPI() {
             placeholder={
               provider === 'ollama'
                 ? 'http://localhost:11434/v1'
-                : customProtocol === 'openai'
+                : provider === 'openai' || customProtocol === 'openai'
                   ? 'https://api.openai.com/v1'
                   : customProtocol === 'gemini'
                     ? 'https://generativelanguage.googleapis.com'
@@ -306,12 +306,15 @@ export function SettingsAPI() {
           <p className="text-xs text-text-muted">
             {provider === 'ollama'
               ? t('api.enterOllamaUrl')
-              : customProtocol === 'openai'
+              : provider === 'openai' || customProtocol === 'openai'
                 ? t('api.enterOpenAIUrl')
                 : customProtocol === 'gemini'
                   ? t('api.enterGeminiUrl')
                   : t('api.enterAnthropicUrl')}
           </p>
+          {(provider === 'openai' || (provider === 'custom' && customProtocol === 'openai')) && (
+            <p className="text-xs text-text-muted">{t('api.openaiBaseUrlHint')}</p>
+          )}
           {isOllamaMode && (
             <p className="text-xs text-text-muted">{t('api.discoverLocalOllamaHint')}</p>
           )}
