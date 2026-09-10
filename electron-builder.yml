@@ -175,7 +175,8 @@ dmg:
 extraMetadata:
   main: dist-electron/main/index.js
 
-# Auto-update from this project's Gitee Releases (not upstream Open Cowork)
 publish:
-  provider: generic
-  url: https://gitee.com/liudong59/qhcode/releases/download/latest
+  provider: github
+  owner: liudong317
+  repo: qhcode
+  releaseType: release
