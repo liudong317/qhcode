@@ -6,7 +6,9 @@ directories:
   output: release
   buildResources: resources
 
-npmRebuild: true
+# Use prebuilt native modules (better-sqlite3 via npmmirror). Avoid VS rebuild on CI/dev PCs.
+npmRebuild: false
+buildDependenciesFromSource: false
 afterPack: ./scripts/after-pack.js
 afterAllArtifactBuild: ./scripts/compress-dmg.js
 

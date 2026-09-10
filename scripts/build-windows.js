@@ -101,6 +101,10 @@ function main() {
     ELECTRON_BUILDER_CACHE: DIRS.electronBuilderCache,
     NPM_CONFIG_CACHE: DIRS.npmCache,
     npm_config_cache: DIRS.npmCache,
+    // GitHub often times out in CN; use npmmirror for NSIS etc.
+    ELECTRON_BUILDER_BINARIES_MIRROR:
+      process.env.ELECTRON_BUILDER_BINARIES_MIRROR ||
+      'https://npmmirror.com/mirrors/electron-builder-binaries/',
   };
 
   delete env.ELECTRON_RUN_AS_NODE;

@@ -54,6 +54,12 @@ function buildCheckList(platform, arch) {
       severity: 'fatal',
     },
     {
+      label: 'Qinghong Market MCP server bundle',
+      relPath: '.bundle-resources/mcp/qinghong-market-server.js',
+      type: 'file',
+      severity: 'fatal',
+    },
+    {
       label: 'Electron main process output (dist-electron/)',
       relPath: 'dist-electron',
       type: 'dir',

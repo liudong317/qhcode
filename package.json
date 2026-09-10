@@ -39,8 +39,9 @@
   "scripts": {
     "dev": "npm run download:node && npm run build:wsl-agent && npm run build:lima-agent && npm run build:mcp && vite",
     "dev:with-python": "npm run download:node && npm run prepare:python && npm run build:wsl-agent && npm run build:lima-agent && npm run build:mcp && vite",
-    "build": "npm run download:node && npm run prepare:gui-tools && npm run prepare:python:all && npm run build:wsl-agent && npm run build:lima-agent && npm run build:mcp && tsc && vite build && node scripts/pre-build-check.js && electron-builder",
+    "build": "npm run download:node && npm run prepare:gui-tools && npm run prepare:python:all && npm run build:wsl-agent && npm run build:lima-agent && npm run build:mcp && node scripts/ensure-better-sqlite3.js && tsc && vite build && node scripts/pre-build-check.js && electron-builder",
     "build:win": "node scripts/build-windows.js",
+    "ensure:sqlite": "node scripts/ensure-better-sqlite3.js",
     "build:wsl-agent": "tsc -p src/main/sandbox/wsl-agent/tsconfig.json",
     "build:lima-agent": "tsc -p src/main/sandbox/lima-agent/tsconfig.json",
     "build:mcp": "node scripts/bundle-mcp.js",
@@ -74,6 +75,7 @@
     "@modelcontextprotocol/server": "2.0.0",
     "@slack/bolt": "4.7.0",
     "@slack/web-api": "7.15.1",
+    "app-builder-lib": "26.8.1",
     "archiver": "^7.0.1",
     "better-sqlite3": "^12.8.0",
     "chokidar": "^4.0.1",
