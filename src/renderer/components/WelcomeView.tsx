@@ -396,42 +396,49 @@ export function WelcomeView() {
     adjustTextareaHeight();
   }, [prompt]);
 
-  const quickTags = [
+  const quickTags: Array<{
+    id: string;
+    label: string;
+    icon: typeof FileText;
+    prompt: string;
+    requiresChrome?: boolean;
+    requiresNotion?: boolean;
+  }> = [
     {
       id: 'create',
-      label: t('welcome.createFile'),
+      label: String(t('welcome.createFile')),
       icon: FileText,
-      prompt: t('welcome.quickPromptCreate'),
+      prompt: String(t('welcome.quickPromptCreate')),
     },
     {
       id: 'crunch',
-      label: t('welcome.crunchData'),
+      label: String(t('welcome.crunchData')),
       icon: BarChart3,
-      prompt: t('welcome.quickPromptCrunch'),
+      prompt: String(t('welcome.quickPromptCrunch')),
     },
     {
       id: 'organize',
-      label: t('welcome.organizeFiles'),
+      label: String(t('welcome.organizeFiles')),
       icon: FolderOpen,
-      prompt: t('welcome.quickPromptOrganize'),
+      prompt: String(t('welcome.quickPromptOrganize')),
     },
     {
       id: 'email',
-      label: t('welcome.checkEmails'),
+      label: String(t('welcome.checkEmails')),
       icon: Mail,
-      prompt: t('welcome.quickPromptEmail'),
+      prompt: String(t('welcome.quickPromptEmail')),
     },
     {
       id: 'papers',
-      label: t('welcome.searchPapers'),
+      label: String(t('welcome.searchPapers')),
       icon: BookOpen,
-      prompt: t('welcome.quickPromptPapers'),
+      prompt: String(t('welcome.quickPromptPapers')),
     },
     {
       id: 'research-notion',
-      label: t('welcome.summarizePapersToNotion'),
+      label: String(t('welcome.summarizePapersToNotion')),
       icon: FileSearch,
-      prompt: t('welcome.quickPromptNotion'),
+      prompt: String(t('welcome.quickPromptNotion')),
     },
   ];
 
@@ -498,8 +505,7 @@ export function WelcomeView() {
                   ? 'border-accent/30 bg-accent-muted text-accent'
                   : 'border-border-subtle bg-background/65 text-text-secondary hover:bg-surface-hover hover:text-text-primary'
               } ${
-                ('requiresChrome' in tag && tag.requiresChrome) ||
-                ('requiresNotion' in tag && tag.requiresNotion)
+                tag.requiresChrome || tag.requiresNotion
                   ? 'relative'
                   : ''
               }`}
@@ -508,16 +514,16 @@ export function WelcomeView() {
                 className={`w-4 h-4 ${selectedTag === tag.id ? 'text-accent' : 'text-text-muted'}`}
               />
               <span>{tag.label}</span>
-              {'requiresChrome' in tag && tag.requiresChrome && (
+              {tag.requiresChrome ? (
                 <span className="ml-1 px-1.5 py-px text-[9px] rounded bg-surface-active text-text-muted">
-                  {t('welcome.chromeRequired')}
+                  {String(t('welcome.chromeRequired'))}
                 </span>
-              )}
-              {'requiresNotion' in tag && tag.requiresNotion && (
+              ) : null}
+              {tag.requiresNotion ? (
                 <span className="ml-1 px-1.5 py-px text-[9px] rounded bg-surface-active text-text-muted">
-                  {t('welcome.notionRequired')}
+                  {String(t('welcome.notionRequired'))}
                 </span>
-              )}
+              ) : null}
             </button>
           ))}
         </div>
