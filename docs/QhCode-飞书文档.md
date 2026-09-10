@@ -27,9 +27,9 @@
 ## 二、下载与安装（Windows）
 
 1. 打开下载页：  
-   **https://github.com/liudong317/qhcode/releases/tag/v1.0.1**  
+   **https://github.com/liudong317/qhcode/releases/tag/v1.0.2**  
    （或 Releases 列表里选最新版）
-2. 下载安装包：`QhCode-1.0.1-win-x64.exe`
+2. 下载安装包：`QhCode-1.0.2-win-x64.exe`
 3. 双击安装，按提示完成
 4. 从开始菜单或桌面打开 **QhCode**（任务栏应为小狐狸图标）
 
@@ -173,7 +173,7 @@ A：Windows 版已发；**Mac（Apple M 芯片）版正在准备**，发布后�
 ## 八、一页速查（可截图发买家）
 
 ```
-1. 下载安装：GitHub Releases → QhCode-1.0.1-win-x64.exe（最新版）
+1. 下载安装：GitHub Releases → QhCode-1.0.2-win-x64.exe（最新版）
 2. 设置 → API → 选提供商 → 填 Key + Base URL（可改，不写死）→ 保存
    （可选：一键填入晴红示例，仍可改地址）
 3. 设置 → MCP → 晴红资讯：贴资讯 Key → 启用
@@ -184,4 +184,4 @@ A：Windows 版已发；**Mac（Apple M 芯片）版正在准备**，发布后�
 
 ---
 
-*文档版本：与 QhCode **v1.0.1** 配套 | 晴红出品*
+*文档版本：与 QhCode **v1.0.2** 配套 | 晴红出品*
