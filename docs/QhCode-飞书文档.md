@@ -123,8 +123,14 @@ A：请检查：
 
 **Q：中转站和资讯 Key 是一回事吗？**  
 A：不是。  
-- 中转站 Key → 给 AI **说话**用  
+- 中转站 / 大模型 Key → 给 AI **说话**用  
 - 资讯 / 行情 Key → 给 AI **调数据接口**用  
+
+**Q：DeepSeek 填了链接和 Key，诊断为什么失败？**  
+A：链接和 Key 往往没问题；模型名必须用官方 **小写 ID**。当前可用例如：  
+- `deepseek-flash`（不要写成 `DeepSeek-V4-Flash`）  
+- `deepseek-v4-pro`  
+Base URL 建议：`https://api.deepseek.com/v1`（或 `https://api.deepseek.com`），保存后应保持你填的地址不变。
 
 **Q：会不会自动下单交易？**  
 A：不会。本软件不做交易下单，数据仅供学习复盘。

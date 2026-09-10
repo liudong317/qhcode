@@ -1406,10 +1406,7 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
     dispatch({ type: 'SET_IS_TESTING', payload: true });
     dispatch({ type: 'SET_TEST_RESULT', payload: null });
     try {
-      const resolvedBaseUrl =
-        provider === 'custom' || provider === 'ollama'
-          ? baseUrl.trim()
-          : (baseUrl.trim() || currentPreset.baseUrl || '').trim();
+      const resolvedBaseUrl = (baseUrl.trim() || currentPreset.baseUrl || '').trim();
 
       const result = await window.electronAPI.config.test({
         provider,
@@ -1463,10 +1460,7 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
     dispatch({ type: 'SET_DIAGNOSTIC_RESULT', payload: null });
     dispatch({ type: 'SET_TEST_RESULT', payload: null });
     try {
-      const resolvedBaseUrl =
-        provider === 'custom' || provider === 'ollama'
-          ? baseUrl.trim()
-          : (baseUrl.trim() || currentPreset.baseUrl || '').trim();
+      const resolvedBaseUrl = (baseUrl.trim() || currentPreset.baseUrl || '').trim();
 
       const finalModel = useCustomModel ? customModel.trim() : model;
 
@@ -1748,10 +1742,8 @@ export function useApiConfigState(options: UseApiConfigStateOptions = {}) {
       clearError();
       dispatch({ type: 'SET_IS_SAVING', payload: true });
       try {
-        const resolvedBaseUrl =
-          provider === 'custom' || provider === 'ollama'
-            ? baseUrl.trim()
-            : (currentPreset.baseUrl || baseUrl).trim();
+        // Prefer the URL the user typed; only fall back to provider preset when empty.
+        const resolvedBaseUrl = (baseUrl.trim() || currentPreset.baseUrl || '').trim();
 
         const persistedProfiles = toPersistedProfiles(profiles);
 
