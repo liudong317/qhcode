@@ -168,7 +168,7 @@
 - [ ] **macOS Apple Silicon（M）安装包** — **后续版本再更新**（见第六节；本仓暂无 Mac 产物）
 - [ ] 客户端「关于 / 检查更新」端到端验证
 - [ ] 体积压缩（1.0.4 ≈ 216MB，偏大）
-- [ ] GitHub Release 上传 / 维护 v1.0.4 三件套
+- [x] GitHub Release **v1.0.4** 三件套已上传：https://github.com/liudong317/qhcode/releases/tag/v1.0.4
 
 ### 待办（下一阶段）
 - [ ] 设置页：大模型 + 资讯 + 行情 Key 更清晰的表单引导
