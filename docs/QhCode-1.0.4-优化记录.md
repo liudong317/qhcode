@@ -3,7 +3,9 @@
 日期：2026-09-14  
 版本：1.0.3 → **1.0.4**  
 范围：先能用（MCP 卫生 + Windows bash + 找文件工具 + 工作目录 + 狐狸图标）  
-**未做**：浏览器产品化、OS 级沙箱重写、对标 WorkBuddy 全家桶。打包等审核后再打。
+**未做**：浏览器产品化、OS 级沙箱重写、对标 WorkBuddy 全家桶。
+
+全版本对照与双仓推送路径见：[`QhCode-版本更新记录.md`](./QhCode-版本更新记录.md)
 
 ## 为什么做
 
@@ -29,7 +31,19 @@
    `defaultWorkdir` 为空时，写入并使用 `%APPDATA%\qhcode\default_working_dir`，同时设置 `COWORK_WORKDIR`。新会话不再 cwd 对不上。
 
 5. **桌面狐狸图标**  
-   `resources/icon.png` 本来就是小狐狸，但 `signAndEditExecutable: false` 导致 exe 仍是 Electron 原子图标。已改为打包时打 ico，并在 afterPack 再盖一次图标。覆盖安装后若桌面仍是旧图，刷新一下图标缓存即可。
+   `resources/icon.png` 本来就是小狐狸，但此前 `signAndEditExecutable: false` 等会导致 exe 仍是 Electron 原子图标。已改为打包时打 ico，afterPack 再盖一次（并兼容本机缺 `7za` 时用 `7zip-bin` / 缓存 rcedit 回退）。  
+   覆盖安装后若桌面/任务栏仍是旧图：重建快捷方式指向 `resources\icon.ico`，或清 Windows 图标缓存后再固定任务栏。
+
+## 产物与安装
+
+| 项 | 路径 |
+|----|------|
+| 安装包 | `C:\dev\open-cowork\release\QhCode-1.0.4-win-x64.exe` |
+| 解包目录（构建） | `C:\dev\open-cowork\release\win-unpacked\` |
+| 本机安装示例 | `F:\qhcode\`（也可 NSIS 自选目录） |
+| GitHub Release | https://github.com/liudong317/qhcode/releases/tag/v1.0.4 |
+
+**平台说明：** 本版仅 Windows。macOS（Apple Silicon）**后续版本再更新**，暂无排期。
 
 ## 你升级后要做的（手动）
 
@@ -43,7 +57,9 @@
 
 Playwright / 内嵌浏览器、完整权限引擎重写、执行树、Skill 市场、升 pi 版本。
 
-## 仓库
+## 仓库与推送
 
-- GitHub：https://github.com/liudong317/qhcode  
-- Gitee：https://gitee.com/liudong59/qhcode  
+- GitHub（主仓 / 装包）：https://github.com/liudong317/qhcode  
+- Gitee（镜像）：https://gitee.com/liudong59/qhcode  
+- 推送：`git push origin main`（Gitee）· `git push github main`（GitHub）  
+- 详见：[`QhCode-版本更新记录.md`](./QhCode-版本更新记录.md)

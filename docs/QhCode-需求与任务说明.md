@@ -3,7 +3,13 @@
 > 基于 Open Cowork 二次封装的桌面 AI 助手  
 > 品牌：**QhCode**（晴红出品）  
 > 源码目录：`C:\dev\open-cowork`  
-> 文档更新日期：2026-09-10（**当前发版 v1.0.3**；今晚计划打 Mac M）
+> 文档更新日期：2026-09-14（**当前发版 v1.0.4 · Windows**；**macOS 后续版本再更新**）  
+>  
+> **开源地址（GitHub，主仓）**：https://github.com/liudong317/qhcode  
+> **安装包 Releases**：https://github.com/liudong317/qhcode/releases  
+> **当前 Win 下载**：https://github.com/liudong317/qhcode/releases/tag/v1.0.4  
+> **Gitee（国内镜像 / 看代码）**：https://gitee.com/liudong59/qhcode  
+> **版本更新 + 双仓推送路径**：[`docs/QhCode-版本更新记录.md`](./QhCode-版本更新记录.md)
 
 ---
 
@@ -24,15 +30,16 @@
 ### 产品目标
 | 优先级 | 目标 | 状态 |
 |--------|------|------|
-| P0 | Windows 桌面 App（exe），双击可用 | **已出 v1.0.3** |
+| P0 | Windows 桌面 App（exe），双击可用 | **已出 v1.0.4** |
 | P0 | GUI 填大模型 API Key + 资讯 Key + 行情 Key | 大模型 + MCP 双连接器可用；OpenAI 页可改 Base URL |
 | P0 | API 设置可选推荐晴红中转站（不锁死） | **已完成** |
 | P0 | 预置 MCP / Skills，欢迎页快捷场景 | **资讯 + 行情均已完成** |
 | P0 | 设置内「联系助理」：微信号 + 二维码 | **已完成** |
-| P0 | 任务栏 / 窗口狐狸图标 | **v1.0.1 已修** |
+| P0 | 任务栏 / 窗口狐狸图标 | **v1.0.1 / 1.0.4 已修**（覆盖后若仍原子图，清图标缓存） |
+| P0 | Agent 能列目录 / 跑命令 / 找文件 + 安装版 MCP 路径正确 | **v1.0.4 已修** |
 | P1 | GitHub Releases + electron-updater | **通道已接**；待验证检查更新 |
-| P1 | 安装包尽量压缩体积 | 当前约 **204MB**（1.0.1）；待压 |
-| P0→P1 | **macOS Apple Silicon（M 芯片）** | **今晚回家做**（见第六节清单） |
+| P1 | 安装包尽量压缩体积 | 当前约 **216MB**（1.0.4）；待压 |
+| P0→P1 | **macOS Apple Silicon（M 芯片）** | **后续版本再更新**（见第六节；当前未排期） |
 | P2 | 飞书远程中文开箱 + 资讯×行情联合场景 | 未开始 |
 
 ### 非目标（当前不做）
@@ -104,6 +111,8 @@
 | 渠道 | 内容 |
 |------|------|
 | **微信（主）** | `ziyouxiaoqi123`（加好友请备注：QhCode / 资讯 / 行情 / 续费） |
+| **GitHub（开源主仓 + 下载）** | 开源：https://github.com/liudong317/qhcode · Releases：https://github.com/liudong317/qhcode/releases · 当前 Win：https://github.com/liudong317/qhcode/releases/tag/v1.0.4 |
+| **Gitee（源码）** | https://gitee.com/liudong59/qhcode |
 | **晴红中转站（大模型）** | 官网 [https://www.qinghong.tech/](https://www.qinghong.tech/) · Base URL `https://www.qinghong.tech/v1` |
 | 闲鱼 | 搜：程序员317呀 或 行囊鱼777 |
 | 淘宝 | 晴红的小店 |
@@ -147,18 +156,19 @@
 - [x] 关闭指向上游 Open Cowork 的自动更新；改为本仓 GitHub Releases
 - [x] **Gitee 公开仓（代码，国内）**：https://gitee.com/liudong59/qhcode
 - [x] **GitHub 公开仓（代码 + 安装包）**：https://github.com/liudong317/qhcode
-- [x] **v1.0.3 安装包**（保留；已删旧版）：`QhCode-1.0.3-win-x64.exe`
-  - 本机：`E:\文件\QhCode-1.0.3-win-x64.exe`
-  - 工程：`C:\dev\open-cowork\release\QhCode-1.0.3-win-x64.exe`
-  - 下载：https://github.com/liudong317/qhcode/releases/tag/v1.0.3
+- [x] **v1.0.4 安装包**（当前推荐）：`QhCode-1.0.4-win-x64.exe`
+  - 工程：`C:\dev\open-cowork\release\QhCode-1.0.4-win-x64.exe`
+  - 下载：https://github.com/liudong317/qhcode/releases/tag/v1.0.4（上传 Release 后生效）
 - [x] v1.0.1：任务栏狐狸图标
 - [x] v1.0.2：保存设置不再把自定义 Base URL 改回 `api.openai.com`
-- [x] v1.0.3：Windows 重打包发版（当前推荐安装此版）
+- [x] v1.0.3：Windows 重打包发版
+- [x] v1.0.4：MCP 路径卫生 + Windows bash + ls/grep/find + 工作目录 + 狐狸图标落盘（详见版本更新记录）
 
-### 进行中 / 今晚
-- [ ] **macOS Apple Silicon（M）安装包**（今晚回家做，见第六节）
+### 后续（未排期）
+- [ ] **macOS Apple Silicon（M）安装包** — **后续版本再更新**（见第六节；本仓暂无 Mac 产物）
 - [ ] 客户端「关于 / 检查更新」端到端验证
-- [ ] 体积压缩（1.0.1 偏大）
+- [ ] 体积压缩（1.0.4 ≈ 216MB，偏大）
+- [ ] GitHub Release 上传 / 维护 v1.0.4 三件套
 
 ### 待办（下一阶段）
 - [ ] 设置页：大模型 + 资讯 + 行情 Key 更清晰的表单引导
@@ -171,11 +181,14 @@
 
 ---
 
-## 六、macOS Apple Silicon（M 芯片）— 今晚回家做
+## 六、macOS Apple Silicon（M 芯片）— 后续版本再更新
+
+> **对外口径（仓库 / 飞书 / 买家）：** 当前仅发 **Windows x64**；**macOS 版将在后续版本更新发布**，不出具体日期。  
+> **对内：** 下面清单留给真有 Mac 构建机时用；**现在不做、不承诺排期**。
 
 | 项 | 说明 |
 |----|------|
-| 目标产物 | `QhCode-{version}-mac-arm64.dmg`（建议与 Win 同版本号，或 `1.0.1` / `1.1.0`） |
+| 目标产物 | `QhCode-{version}-mac-arm64.dmg`（建议与当时 Win 同大版本号） |
 | 构建机 | **必须用 Apple Silicon Mac**（或 CI：`macos-14` arm64 runner） |
 | 源码 | 先 `git pull` Gitee 或 GitHub：`liudong59/qhcode` / `liudong317/qhcode` |
 | electron-builder | 已有 `mac` 段；打 `arm64`；图标用 `resources/icon.icns` |
@@ -184,18 +197,18 @@
 | Node | 需 `darwin-arm64` 的 Node（`npm run download:node` 在 Mac 上拉） |
 | MCP | 与 Win 共用 Node MCP（资讯/行情），**不要依赖 Python** |
 | better-sqlite3 | Mac 上用对应 Electron ABI 预编译或本机 rebuild |
-| 发版 | 上传 GitHub Release：`dmg` + `latest-mac.yml` + blockmap |
+| 发版 | 上传 GitHub Release：`dmg` + `latest-mac.yml` + blockmap；并改飞书「Mac 下载」 |
 
-### 今晚建议步骤（简版）
+### 有 Mac 构建机时再做（备忘）
 1. Mac 上装 Node ≥22，克隆/拉最新 `main`
 2. `npm ci`（或 `npm install`）
 3. 确认 `resources/icon.icns`、狐狸品牌资源齐全
-4. `npm run build` / 或 `npx electron-builder --mac dir` / `dmg`（按本机脚本）
-5. 本地打开验证：任务栏/Dock 狐狸图标、API Base URL 可改、资讯/行情 MCP
+4. 按本机脚本打 `arm64` dmg
+5. 本地验证：Dock 狐狸图标、API Base URL、资讯/行情 MCP
 6. 打 tag → 上传 GitHub Releases（与 Win 并列）
-7. 更新飞书文档增加「Mac 下载」一节
+7. 更新飞书文档增加「Mac 下载」一节，并把对外口径从「后续版本」改成可下载链接
 
-**注意：** Windows 本机打不出真正的 Mac arm64 正式包；今晚务必在 M 芯片机器上编。
+**注意：** Windows 本机打不出真正的 Mac arm64 正式包；未具备 M 芯片机器前，文档与仓库一律写「后续版本再更新」，避免「正在准备 / 今晚」这类会催单的表述。
 
 ---
 
@@ -205,16 +218,31 @@
 
 | 仓 | 用途 | 地址 |
 |----|------|------|
-| **Gitee** | 国内看代码 / 备份 | https://gitee.com/liudong59/qhcode |
-| **GitHub** | **安装包 Releases + electron-updater** | https://github.com/liudong317/qhcode |
+| **GitHub（开源主仓）** | **开源地址** + 安装包 Releases + electron-updater | https://github.com/liudong317/qhcode |
+| **Gitee** | 国内看代码 / 备份镜像 | https://gitee.com/liudong59/qhcode |
 
-账号：Gitee `liudong59` · GitHub `liudong317`
+账号：GitHub `liudong317` · Gitee `liudong59`  
+对外开源请以 GitHub 为准：https://github.com/liudong317/qhcode  
+
+本机 Git remote（源码目录 `C:\dev\open-cowork`）：
+
+| Remote | 推到哪 | URL |
+|--------|--------|-----|
+| `github` | GitHub 主仓 | `https://github.com/liudong317/qhcode.git` |
+| `origin` | Gitee 镜像 | `https://gitee.com/liudong59/qhcode.git` |
+
+```bash
+git push origin main    # Gitee
+git push github main    # GitHub
+```
+
+完整说明（含各版变更）：[`QhCode-版本更新记录.md`](./QhCode-版本更新记录.md)
 
 ### 7.2 为什么安装包不放 Gitee？
 - Gitee Release **附件上限约 100MB**
-- 当前 Win 安装包约 **204MB（1.0.1）**，放不下
+- 当前 Win 安装包约 **216MB（1.0.4）**，放不下
 - 故：大安装包只放 **GitHub Releases**；Gitee 放源码  
-- 本机 Git 推 GitHub 若 443 失败，可用 `ghproxy.net` 等代理推送（已验证可行）
+- 本机 Git 推 GitHub 若 443 失败，可用代理后再推（已验证可行）
 
 ### 7.3 自动更新配置
 - `electron-builder.yml` → `publish.provider: github`，`owner: liudong317`，`repo: qhcode`
@@ -222,18 +250,21 @@
 - **不得**再指向上游 `OpenCoworkAI/open-cowork`
 
 ### 7.4 发版清单（Windows）
-1. 改 `package.json` version  
+1. 改 `package.json` version；更新 `docs/QhCode-版本更新记录.md`  
 2. `npm run build:win`  
 3. 产物：`release/QhCode-{ver}-win-x64.exe` + `latest.yml` + `.blockmap`  
-4. 推 Gitee + GitHub；GitHub Release 上传三件套  
-5. **删除本机旧版 exe**，只留当前版（已执行：保留 1.0.1，删 1.0.0）
+4. `git push origin main` + `git push github main`  
+5. GitHub Release 上传三件套  
+6. 本机可只留当前版 exe；旧版可删
 
 ### 7.5 打包踩坑备忘（Windows）
 | 问题 | 处理 |
 |------|------|
 | `better-sqlite3` 需 VS | `npmRebuild: false` + `ensure-better-sqlite3.js` |
 | NSIS 下载超时 | `ELECTRON_BUILDER_BINARIES_MIRROR=npmmirror` |
-| 任务栏 Electron 原子图标 | 把 `icon.ico` 打进 `extraResources` + `setAppUserModelId` |
+| 任务栏 Electron 原子图标 | `icon.ico` 进 extraResources + `setAppUserModelId` + afterPack 盖章；覆盖后清图标缓存 |
+| afterPack 盖图标报缺 `7za` | PATH 加入 `node_modules/7zip-bin/win/x64`，或用缓存 `rcedit` 回退 |
+| 安装版 MCP 指到开发机路径 | `builtin-mcp-paths` 钉到 `resources/mcp` |
 | Base URL 像写死 | OpenAI 页展示可编辑 Base URL；中转站仅为可选示例 |
 
 ---
@@ -241,8 +272,8 @@
 ## 八、安装包体积与压缩策略
 
 ### 现状
-- v1.0.1 Win x64 NSIS ≈ **204MB**（偏大，后续优先压缩）
-- 旧版 v1.0.0 已从本机删除，以 1.0.1 为准
+- v1.0.4 Win x64 NSIS ≈ **216MB**（偏大，后续优先压缩）
+- 以当前推荐版为准；旧安装包可删
 
 ### 原则
 - 依赖打进安装包（用户无需预装 Node / Python）
@@ -253,7 +284,7 @@
 
 ## 九、开箱体验（购后）
 
-1. 安装 [QhCode-1.0.3-win-x64.exe](https://github.com/liudong317/qhcode/releases/tag/v1.0.3) → 打开（软件免费）  
+1. 安装 [QhCode-1.0.4-win-x64.exe](https://github.com/liudong317/qhcode/releases/tag/v1.0.4) → 打开（软件免费）  
 2. **设置 → API**：选提供商 → 填 Key + **可改的 Base URL** → 保存（可选：一键填入晴红示例，仍可改）  
 3. **设置 → MCP 连接器**：资讯 Key + 行情 Key 并启用  
 4. 卡壳 → **设置 → 帮助** 微信 `ziyouxiaoqi123`
@@ -267,17 +298,18 @@
 | 项 | 值 |
 |----|-----|
 | 底座 | Open Cowork 3.x（MIT） |
-| 当前版本 | **1.0.3** |
+| 当前版本 | **1.0.4** |
 | 开发 | `cd C:\dev\open-cowork && npm run dev` |
 | 开发端口 | `http://localhost:6173` |
 | 打 Win 包 | `npm run build:win` |
 | AppUserModelId | `com.qinghong.qhcode` |
-| 用户数据 | `%APPDATA%\qinghong\` |
+| 用户数据 | `%APPDATA%\qhcode\` |
 | 中转站常量 | `src/renderer/constants/qinghong-relay.ts`（仅示例） |
 | 资讯 / 行情 MCP | `qinghong-finance-server.ts` / `qinghong-market-server.ts` |
-| 飞书用户文档 | `E:\文件\QhCode-飞书文档.md` · 仓库 `docs/QhCode-飞书文档.md` |
-| Gitee / GitHub | 见第七节 |
-| 当前 Win Release | https://github.com/liudong317/qhcode/releases/tag/v1.0.3 |
+| 飞书用户文档 | 仓库 `docs/QhCode-飞书文档.md` |
+| 版本更新记录 | `docs/QhCode-版本更新记录.md` |
+| Gitee / GitHub 推送 | `origin`→Gitee · `github`→GitHub（见第七节） |
+| 当前 Win Release | https://github.com/liudong317/qhcode/releases/tag/v1.0.4 |
 
 ---
 
@@ -295,9 +327,10 @@
 1. **M1（完成）**：品牌 + 文档 + 资讯 MCP + 帮助页/中转站 + 免费策略  
 2. **M2（完成）**：行情 MCP + Win 安装包 + 双仓 + Releases  
 3. **M2.1（完成）**：v1.0.1 狐狸图标 · v1.0.2 Base URL 保存修复 · v1.0.3 重打包  
-4. **M3（今晚）**：**macOS arm64（M 芯片）**  
-5. **M4**：检查更新验证 + 体积压缩 + 购后完善  
-6. **M5**：资讯×行情联合 + 飞书远程开箱  
+4. **M2.2（完成）**：v1.0.4 Agent 手和脚（MCP / bash / ls·grep·find / 工作目录 / 图标）  
+5. **M3（后续）**：**macOS arm64（M 芯片）— 后续版本再更新**（未排期）  
+6. **M4**：检查更新验证 + 体积压缩 + 购后完善  
+7. **M5**：资讯×行情联合 + 飞书远程开箱  
 
 ---
 
@@ -310,7 +343,9 @@
 | 微信 | ziyouxiaoqi123 |
 | 晴红中转站 | [https://www.qinghong.tech/](https://www.qinghong.tech/)（可选，不强制） |
 | 资讯 / 行情 API | 见第三节 |
-| QhCode 下载（Win） | [Releases v1.0.3](https://github.com/liudong317/qhcode/releases/tag/v1.0.3) |
-| QhCode | 免费桌面入口；变现靠 Key + 私域 |
+| **GitHub 开源** | https://github.com/liudong317/qhcode |
+| **QhCode 下载（Win）** | [Releases v1.0.4](https://github.com/liudong317/qhcode/releases/tag/v1.0.4) · [全部 Releases](https://github.com/liudong317/qhcode/releases) |
+| Gitee 镜像 | https://gitee.com/liudong59/qhcode |
+| QhCode | 免费桌面入口；变现靠 Key + 私域（Key **不写进**安装包，买家自购自配） |
 
 数据供学习复盘，不构成投资建议；据此操作风险自担。

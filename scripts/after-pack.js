@@ -88,6 +88,44 @@ function findAppBuilderBin() {
   return candidates.find((candidate) => fs.existsSync(candidate)) || null;
 }
 
+function findSevenZa() {
+  const candidates = [
+    path.join(__dirname, '..', 'node_modules', '7zip-bin', 'win', 'x64', '7za.exe'),
+    path.join(__dirname, '..', 'node_modules', '7zip-bin', 'win', 'ia32', '7za.exe'),
+    'C:\\Program Files\\7-Zip\\7z.exe',
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
+function findCachedRcedit() {
+  const root = path.join(__dirname, '..', '.build-cache', 'electron-builder', 'winCodeSign');
+  const direct = [
+    path.join(root, 'extracted', 'rcedit-x64.exe'),
+    path.join(root, 'extracted', 'rcedit-ia32.exe'),
+  ];
+  for (const candidate of direct) {
+    if (fs.existsSync(candidate)) return candidate;
+  }
+  if (!fs.existsSync(root)) return null;
+  const stack = [root];
+  while (stack.length) {
+    const dir = stack.pop();
+    let entries = [];
+    try {
+      entries = fs.readdirSync(dir, { withFileTypes: true });
+    } catch {
+      continue;
+    }
+    for (const entry of entries) {
+      const full = path.join(dir, entry.name);
+      if (entry.isDirectory()) stack.push(full);
+      else if (/^rcedit-x64\.exe$/i.test(entry.name)) return full;
+      else if (/^rcedit.*\.exe$/i.test(entry.name)) return full;
+    }
+  }
+  return null;
+}
+
 async function stampWindowsFoxIcon(appOutDir, packager) {
   const productFilename = packager?.appInfo?.productFilename || 'QhCode';
   const exePath = path.join(appOutDir, `${productFilename}.exe`);
@@ -102,27 +140,66 @@ async function stampWindowsFoxIcon(appOutDir, packager) {
     return;
   }
 
-  const appBuilderBin = findAppBuilderBin();
-  if (!appBuilderBin) {
-    console.warn('  ⚠ skip fox icon stamp: app-builder binary not found');
-    return;
+  const { spawnSync } = require('child_process');
+  const sevenZa = findSevenZa();
+  const env = { ...process.env };
+  if (sevenZa) {
+    env.PATH = `${path.dirname(sevenZa)}${path.delimiter}${env.PATH || ''}`;
   }
 
-  const { spawnSync } = require('child_process');
-  const result = spawnSync(
-    appBuilderBin,
-    [
-      'rcedit',
-      '--args',
-      JSON.stringify([exePath, '--set-icon', iconPath, '--set-version-string', 'ProductName', 'QhCode']),
-    ],
-    { encoding: 'utf8' }
-  );
-  if (result.status === 0) {
-    console.log(`  ✓ stamped fox icon onto ${path.basename(exePath)}`);
+  const appBuilderBin = findAppBuilderBin();
+  if (appBuilderBin) {
+    const result = spawnSync(
+      appBuilderBin,
+      [
+        'rcedit',
+        '--args',
+        JSON.stringify([
+          exePath,
+          '--set-icon',
+          iconPath,
+          '--set-version-string',
+          'ProductName',
+          'QhCode',
+        ]),
+      ],
+      { encoding: 'utf8', env }
+    );
+    if (result.status === 0) {
+      console.log(`  ✓ stamped fox icon onto ${path.basename(exePath)}`);
+      return;
+    }
+    console.warn('  ⚠ fox icon stamp via app-builder failed:', (result.stderr || result.stdout || '').trim());
+  }
+
+  const rcedit = findCachedRcedit();
+  if (!rcedit) {
+    console.warn('  ⚠ skip fox icon stamp: rcedit not found (ensure 7za available for winCodeSign)');
     return;
   }
-  console.warn('  ⚠ fox icon stamp failed:', (result.stderr || result.stdout || '').trim());
+  const version = String(packager?.appInfo?.version || '0.0.0').replace(/[^\d.]/g, '') || '0.0.0';
+  const fileVersion = /^\d+\.\d+\.\d+$/.test(version) ? `${version}.0` : version;
+  const fallback = spawnSync(
+    rcedit,
+    [
+      exePath,
+      '--set-icon',
+      iconPath,
+      '--set-version-string',
+      'ProductName',
+      'QhCode',
+      '--set-file-version',
+      fileVersion,
+      '--set-product-version',
+      fileVersion,
+    ],
+    { encoding: 'utf8', env }
+  );
+  if (fallback.status === 0) {
+    console.log(`  ✓ stamped fox icon onto ${path.basename(exePath)} (rcedit fallback)`);
+    return;
+  }
+  console.warn('  ⚠ fox icon stamp failed:', (fallback.stderr || fallback.stdout || '').trim());
 }
 
 /**
