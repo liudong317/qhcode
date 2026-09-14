@@ -69,16 +69,76 @@ function findDirs(basePath, dirName) {
   return results;
 }
 
+function findAppBuilderBin() {
+  const candidates = [
+    path.join(__dirname, '..', 'node_modules', 'app-builder-bin', 'win', 'x64', 'app-builder.exe'),
+    path.join(__dirname, '..', 'node_modules', 'app-builder-bin', 'win', 'ia32', 'app-builder.exe'),
+    path.join(
+      __dirname,
+      '..',
+      'node_modules',
+      'app-builder-lib',
+      'node_modules',
+      'app-builder-bin',
+      'win',
+      'x64',
+      'app-builder.exe'
+    ),
+  ];
+  return candidates.find((candidate) => fs.existsSync(candidate)) || null;
+}
+
+async function stampWindowsFoxIcon(appOutDir, packager) {
+  const productFilename = packager?.appInfo?.productFilename || 'QhCode';
+  const exePath = path.join(appOutDir, `${productFilename}.exe`);
+  const iconPath = path.join(
+    packager?.projectDir || path.join(__dirname, '..'),
+    'resources',
+    'icon.ico'
+  );
+
+  if (!fs.existsSync(exePath) || !fs.existsSync(iconPath)) {
+    console.warn(`  ⚠ skip fox icon stamp: missing ${exePath} or ${iconPath}`);
+    return;
+  }
+
+  const appBuilderBin = findAppBuilderBin();
+  if (!appBuilderBin) {
+    console.warn('  ⚠ skip fox icon stamp: app-builder binary not found');
+    return;
+  }
+
+  const { spawnSync } = require('child_process');
+  const result = spawnSync(
+    appBuilderBin,
+    [
+      'rcedit',
+      '--args',
+      JSON.stringify([exePath, '--set-icon', iconPath, '--set-version-string', 'ProductName', 'QhCode']),
+    ],
+    { encoding: 'utf8' }
+  );
+  if (result.status === 0) {
+    console.log(`  ✓ stamped fox icon onto ${path.basename(exePath)}`);
+    return;
+  }
+  console.warn('  ⚠ fox icon stamp failed:', (result.stderr || result.stdout || '').trim());
+}
+
 /**
  * @param {import('electron-builder').AfterPackContext} context
  */
 module.exports = async function afterPack(context) {
-  const { appOutDir, electronPlatformName, arch } = context;
+  const { appOutDir, electronPlatformName, arch, packager } = context;
   // electron-builder arch: 0=ia32, 1=x64, 3=arm64
   const archName = arch === 3 ? 'arm64' : arch === 1 ? 'x64' : 'ia32';
   const platform = electronPlatformName; // 'darwin', 'win32', 'linux'
 
   console.log(`\n🧹 after-pack: cleaning ${platform}-${archName} build...`);
+
+  if (platform === 'win32') {
+    await stampWindowsFoxIcon(appOutDir, packager);
+  }
 
   // Determine the app resources path
   let resourcesDir;

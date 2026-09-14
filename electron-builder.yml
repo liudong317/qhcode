@@ -71,7 +71,7 @@ win:
       arch:
         - x64
   artifactName: ${productName}-${version}-win-${arch}.${ext}
-  signAndEditExecutable: false
+  signAndEditExecutable: true
   extraResources:
     - from: .bundle-resources/mcp
       to: mcp

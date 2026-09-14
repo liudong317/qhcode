@@ -5,6 +5,8 @@
   !ifndef BUILD_UNINSTALLER
   nsExec::Exec 'taskkill /T /F /IM "Open Cowork.exe"'
   Pop $R0
+  nsExec::Exec 'taskkill /T /F /IM "QhCode.exe"'
+  Pop $R0
   ; Kill orphaned node.exe from install directory via PowerShell (wmic deprecated on Win 11)
   ; $$ escapes dollar sign in NSIS so PowerShell receives $_ correctly
   nsExec::Exec 'powershell.exe -NoProfile -Command "Get-CimInstance Win32_Process | Where-Object { $$_.Name -eq ''node.exe'' -and $$_.ExecutablePath -like ''*Open Cowork*'' } | ForEach-Object { Stop-Process -Id $$_.ProcessId -Force -ErrorAction SilentlyContinue }"'

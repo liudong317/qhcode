@@ -30,13 +30,81 @@ function normalizeShellPath(shellPath: string): string {
   return quoted ? quoted[1] : trimmed;
 }
 
+const WINDOWS_ENV_KEYS = [
+  'SYSTEMROOT',
+  'SystemRoot',
+  'WINDIR',
+  'windir',
+  'COMSPEC',
+  'ComSpec',
+  'PATHEXT',
+  'SystemDrive',
+  'USERPROFILE',
+  'HOMEDRIVE',
+  'HOMEPATH',
+  'TEMP',
+  'TMP',
+  'USERNAME',
+  'USERDOMAIN',
+] as const;
+
+function isUsableWindowsShell(shellPath: string): boolean {
+  const name = path.win32.basename(shellPath).toLowerCase();
+  return (
+    name === 'cmd' ||
+    name === 'cmd.exe' ||
+    name === 'powershell' ||
+    name === 'powershell.exe' ||
+    name === 'pwsh' ||
+    name === 'pwsh.exe'
+  );
+}
+
+function isWslBashStub(shellPath: string): boolean {
+  const normalized = shellPath.replace(/\//g, '\\').toLowerCase();
+  return normalized.endsWith('\\system32\\bash.exe') || normalized.endsWith('\\sysnative\\bash.exe');
+}
+
+export function resolveWindowsCmdPath(): string {
+  const systemRoot = process.env.SystemRoot || process.env.SYSTEMROOT || 'C:\\Windows';
+  const candidate = path.join(systemRoot, 'System32', 'cmd.exe');
+  return existsSync(candidate) ? candidate : process.env.ComSpec || process.env.COMSPEC || 'cmd.exe';
+}
+
+export function mergeWindowsShellEnv(
+  env?: NodeJS.ProcessEnv | Record<string, string | undefined>
+): NodeJS.ProcessEnv {
+  const merged: NodeJS.ProcessEnv = { ...process.env, ...(env || {}) };
+  for (const key of WINDOWS_ENV_KEYS) {
+    if (!merged[key] && process.env[key]) {
+      merged[key] = process.env[key];
+    }
+  }
+  if (!merged.SystemRoot && !merged.SYSTEMROOT) {
+    merged.SystemRoot = 'C:\\Windows';
+  }
+  if (!merged.ComSpec && !merged.COMSPEC) {
+    merged.ComSpec = resolveWindowsCmdPath();
+  }
+  if (!merged.PATHEXT) {
+    merged.PATHEXT = '.COM;.EXE;.BAT;.CMD;.VBS;.JS;.MSC';
+  }
+  return merged;
+}
+
 function defaultShellResolver(cwd: string): string {
   try {
     const configuredShell = PiSettingsManager.create(cwd).getShellPath();
-    return configuredShell ? normalizeShellPath(configuredShell) : getDefaultShell();
+    if (configuredShell) {
+      const normalized = normalizeShellPath(configuredShell);
+      if (isUsableWindowsShell(normalized) && !isWslBashStub(normalized)) {
+        return normalized;
+      }
+    }
   } catch {
-    return getDefaultShell();
+    // Ignore broken per-cwd pi settings and fall back to cmd.exe.
   }
+  return getDefaultShell();
 }
 
 export function buildWindowsShellInvocation(
@@ -148,13 +216,22 @@ export function createWindowsBashOperations(
           return;
         }
 
-        const { shell, args } = buildWindowsShellInvocation(command, shellResolver(cwd));
-        const child = spawnProcess(shell, args, {
+        const resolvedShell = isUsableWindowsShell(shellResolver(cwd))
+          ? shellResolver(cwd)
+          : resolveWindowsCmdPath();
+        const shell =
+          path.win32.basename(resolvedShell).toLowerCase() === 'cmd.exe' ||
+          path.win32.basename(resolvedShell).toLowerCase() === 'cmd'
+            ? resolveWindowsCmdPath()
+            : resolvedShell;
+        const { shell: invocationShell, args } = buildWindowsShellInvocation(command, shell);
+        const child = spawnProcess(invocationShell, args, {
           cwd,
           detached: false,
-          env: env ?? process.env,
+          env: mergeWindowsShellEnv(env),
           stdio: ['ignore', 'pipe', 'pipe'],
           windowsHide: true,
+          windowsVerbatimArguments: true,
         });
 
         let settled = false;

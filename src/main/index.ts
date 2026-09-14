@@ -666,16 +666,24 @@ function createWindow() {
  * Each session can have its own cwd that differs from this default
  */
 function initializeDefaultWorkingDir(): string {
-  // Create default working directory in user data path (this is the permanent global default)
   const userDataPath = app.getPath('userData');
-  const defaultDir = join(userDataPath, 'default_working_dir');
+  const fallbackDir = join(userDataPath, 'default_working_dir');
 
-  if (!fs.existsSync(defaultDir)) {
-    fs.mkdirSync(defaultDir, { recursive: true });
-    log('[App] Created default working directory:', defaultDir);
+  if (!fs.existsSync(fallbackDir)) {
+    fs.mkdirSync(fallbackDir, { recursive: true });
+    log('[App] Created default working directory:', fallbackDir);
+  }
+
+  const configured = (configStore.get('defaultWorkdir') || '').trim();
+  const defaultDir = configured && fs.existsSync(configured) ? configured : fallbackDir;
+
+  if (configured !== defaultDir) {
+    configStore.update({ defaultWorkdir: defaultDir });
+    log('[App] Persisted defaultWorkdir:', defaultDir);
   }
 
   currentWorkingDir = defaultDir;
+  process.env.COWORK_WORKDIR = defaultDir;
 
   log('[App] Global default working directory:', currentWorkingDir);
   return currentWorkingDir;

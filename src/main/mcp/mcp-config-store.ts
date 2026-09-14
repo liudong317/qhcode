@@ -1,10 +1,13 @@
 import Store, { type Options as StoreOptions } from 'electron-store';
-import { app } from 'electron';
 import * as fs from 'fs';
 import * as crypto from 'crypto';
-import path from 'path';
 import type { MCPServerConfig } from './mcp-manager';
 import { log, logError } from '../utils/logger';
+import {
+  getDefaultMcpPathContext,
+  resolveMcpServerFile,
+  rewriteBuiltinMcpServers,
+} from './builtin-mcp-paths';
 
 /**
  * Preset MCP Server Configurations
@@ -105,6 +108,24 @@ class MCPConfigStore {
 
     this.store = new Store<{ servers: MCPServerConfig[] }>(storeOptions);
     this.ensureQinghongPresets();
+    this.migrateBuiltinServerPaths();
+  }
+
+  /**
+   * Packaged builds must not keep leftover C:\dev\...\dist-mcp paths from a
+   * developer machine sharing %APPDATA%\qhcode. Always pin builtin servers
+   * to extraResources/mcp.
+   */
+  private migrateBuiltinServerPaths(): void {
+    try {
+      const { servers, changed } = rewriteBuiltinMcpServers(this.getServers());
+      if (changed) {
+        this.setServers(servers);
+        log('[MCPConfigStore] Persisted rewritten builtin MCP server paths');
+      }
+    } catch (error) {
+      logError('[MCPConfigStore] Failed to migrate builtin MCP paths:', error);
+    }
   }
 
   /**
@@ -220,59 +241,13 @@ class MCPConfigStore {
    * Get the path to a MCP server file in the mcp directory
    */
   private getMcpServerPath(filename: string): string | null {
-
-    // In development: __dirname points to dist-electron/main
-    // In production: appPath points to the app.asar or unpacked app
-    if (app.isPackaged) {
-      // Production: use compiled JavaScript files from extraResources/mcp
-      // Convert .ts extension to .js
-      const jsFilename = filename.replace(/\.ts$/, '.js');
-      const mcpPath = path.join(process.resourcesPath || '', 'mcp', jsFilename);
-
-      // Check if compiled JS file exists in resources
-      try {
-        if (fs.existsSync(mcpPath)) {
-          return mcpPath;
-        }
-      } catch {
-        // Fall through to development path
-      }
-    }
-
-    // Development: __dirname is dist-electron/main
-    // Need to go up 2 levels to get to project root (dist-electron/main -> dist-electron -> project root)
-    const projectRoot = path.join(__dirname, '..', '..');
-
-    // Prefer bundled JS from dist-mcp in development.
-    // This avoids attempting to run TypeScript directly with `node`.
     const jsFilename = filename.replace(/\.ts$/, '.js');
-    const devBundledPath = path.join(projectRoot, 'dist-mcp', jsFilename);
-    try {
-      if (fs.existsSync(devBundledPath)) {
-        return devBundledPath;
-      }
-    } catch {
-      // Fall through to source path
+    const resolved = resolveMcpServerFile(jsFilename, getDefaultMcpPathContext());
+    if (fs.existsSync(resolved)) {
+      return resolved;
     }
-
-    // Fallback: navigate to src/main/mcp/[filename]
-    const sourcePath = path.join(projectRoot, 'src', 'main', 'mcp', filename);
-
-    // Verify file exists and log for debugging
-    try {
-      if (fs.existsSync(sourcePath)) {
-        log(`[MCPConfigStore] MCP Server path resolved (${filename}):`, sourcePath);
-        return sourcePath;
-      } else {
-        logError(`[MCPConfigStore] File not found at:`, sourcePath);
-        logError('[MCPConfigStore] __dirname:', __dirname);
-        logError('[MCPConfigStore] projectRoot:', projectRoot);
-      }
-    } catch (error) {
-      logError('[MCPConfigStore] Error checking file:', error);
-    }
-
-    return null;
+    logError(`[MCPConfigStore] File not found at:`, resolved);
+    return resolved;
   }
 
   /**

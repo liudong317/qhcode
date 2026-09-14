@@ -22,9 +22,11 @@ import { createHash } from 'crypto';
 import { app, BrowserWindow, shell } from 'electron';
 
 import path from 'path';
+import fs from 'fs';
 import { connectWithOAuthRetry, OpenCoworkMcpOAuthProvider } from './mcp-oauth';
 import { log, logError, logWarn, logCtx, logCtxError, logTiming } from '../utils/logger';
 import { getDefaultShell } from '../utils/shell-resolver';
+import { getDefaultMcpPathContext, resolveMcpServerFile, rewriteBuiltinMcpServerConfig } from './builtin-mcp-paths';
 
 const MCP_LIST_TOOLS_TIMEOUT_MS = 5 * 60 * 1000;
 const MCP_TOOL_CALL_TIMEOUT_MS = 5 * 60 * 1000;
@@ -654,65 +656,14 @@ export class MCPManager {
    * Get the path to a MCP server file in the mcp directory
    */
   private getMcpServerPath(filename: string): string {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const fs = require('fs');
-
-    // In development: __dirname points to dist-electron/main
-    // In production: appPath points to the app.asar or unpacked app
-    if (app.isPackaged) {
-      // Production: use compiled JavaScript files from extraResources/mcp
-      // Convert .ts extension to .js
-      const jsFilename = filename.replace(/\.ts$/, '.js');
-      const mcpPath = path.join(process.resourcesPath || '', 'mcp', jsFilename);
-
-      // Check if compiled JS file exists in resources
-      try {
-        if (fs.existsSync(mcpPath)) {
-          log(`[MCPManager] Found MCP server at: ${mcpPath}`);
-          return mcpPath;
-        } else {
-          logError(`[MCPManager] File not found at: ${mcpPath}`);
-        }
-      } catch (error) {
-        logError(`[MCPManager] Error checking MCP server path: ${error}`);
-      }
-    }
-
-    // Development: __dirname is dist-electron/main
-    // Need to go up 2 levels to get to project root (dist-electron/main -> dist-electron -> project root)
-    const projectRoot = path.join(__dirname, '..', '..');
-
-    // Prefer bundled JS from dist-mcp in development.
-    // This avoids running TypeScript directly with `node` (which will fail without a TS loader).
     const jsFilename = filename.replace(/\.ts$/, '.js');
-    const devBundledPath = path.join(projectRoot, 'dist-mcp', jsFilename);
-    try {
-      if (fs.existsSync(devBundledPath)) {
-        log(`[MCPManager] Found bundled MCP server (dev) at: ${devBundledPath}`);
-        return devBundledPath;
-      }
-    } catch (error) {
-      logWarn(`[MCPManager] Error checking dev bundled MCP server path: ${error}`);
+    const resolved = resolveMcpServerFile(jsFilename, getDefaultMcpPathContext());
+    if (fs.existsSync(resolved)) {
+      log(`[MCPManager] Found MCP server at: ${resolved}`);
+      return resolved;
     }
-
-    // Fallback to source TypeScript (requires running via tsx/ts-node if using command 'node')
-    const sourcePath = path.join(projectRoot, 'src', 'main', 'mcp', filename);
-
-    // Verify file exists and log for debugging
-    try {
-      if (fs.existsSync(sourcePath)) {
-        log(`[MCPManager] MCP Server path resolved (${filename}):`, sourcePath);
-        return sourcePath;
-      } else {
-        logError(`[MCPManager] File not found at:`, sourcePath);
-        logError('[MCPManager] __dirname:', __dirname);
-        logError('[MCPManager] projectRoot:', projectRoot);
-      }
-    } catch (error) {
-      logError('[MCPManager] Error checking file:', error);
-    }
-
-    return sourcePath;
+    logError(`[MCPManager] File not found at: ${resolved}`);
+    return resolved;
   }
 
   /**
@@ -760,6 +711,7 @@ export class MCPManager {
    * connectionStatus is always set to 'connected' or 'failed'.
    */
   private async connectServerInternal(config: MCPServerConfig): Promise<void> {
+    config = rewriteBuiltinMcpServerConfig(config);
     let transport: MCPTransport;
     let commandForLogging = '';
     let argsForLogging: string[] = [];

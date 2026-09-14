@@ -16,8 +16,6 @@ import {
   createAgentSession,
   SessionManager as PiSessionManager,
   SettingsManager as PiSettingsManager,
-  createCodingTools,
-  type BashToolOptions,
   type AgentSession as PiAgentSession,
   type ToolDefinition,
 } from '@mariozechner/pi-coding-agent';
@@ -84,8 +82,9 @@ import {
   normalizeToolExecutionResultForUi,
 } from './tool-result-utils';
 import { fetchOllamaModelInfo } from '../config/ollama-api';
-import { createWindowsBashOperations } from './windows-bash-operations';
+import { buildCoworkCodingTools } from './coding-tools';
 import { createCompactionExtensionFactory } from './compaction-extension';
+import { rewriteBuiltinMcpServerConfig } from '../mcp/builtin-mcp-paths';
 
 // Virtual workspace path shown to the model (hides real sandbox path)
 const VIRTUAL_WORKSPACE_PATH = '/workspace';
@@ -295,7 +294,7 @@ function resolveBundledToolsBinDir(): string | null {
  * 3. Deduplicates all entries
  * 4. Writes the result back to `process.env.PATH`
  *
- * Called once before the first `createCodingTools()` — subsequent calls are no-ops.
+ * Called once before the first coding-tools setup — subsequent calls are no-ops.
  */
 let pathEnriched = false;
 
@@ -2009,32 +2008,12 @@ ${hints.join('\n')}
                 // Resolve path placeholders for presets
                 let resolvedArgs = config.args || [];
 
-                // Check if any args contain placeholders that need resolving
-                const hasPlaceholders = resolvedArgs.some(
-                  (arg) =>
-                    arg.includes('{SOFTWARE_DEV_SERVER_PATH}') ||
-                    arg.includes('{GUI_OPERATE_SERVER_PATH}')
-                );
-
-                if (hasPlaceholders) {
-                  // Get the appropriate preset based on config name
-                  let presetKey: string | null = null;
-                  if (
-                    config.name === 'Software_Development' ||
-                    config.name === 'Software Development'
-                  ) {
-                    presetKey = 'software-development';
-                  } else if (config.name === 'GUI_Operate' || config.name === 'GUI Operate') {
-                    presetKey = 'gui-operate';
-                  }
-
-                  if (presetKey) {
-                    const preset = mcpConfigStore.createFromPreset(presetKey, true);
-                    if (preset && preset.args) {
-                      resolvedArgs = preset.args;
-                    }
-                  }
-                }
+                const rewritten = rewriteBuiltinMcpServerConfig({
+                  name: config.name,
+                  command: config.command,
+                  args: resolvedArgs,
+                });
+                resolvedArgs = rewritten.args || resolvedArgs;
 
                 mcpServers[serverKey] = {
                   type: 'stdio',
@@ -2158,12 +2137,7 @@ Tool routing:
       // executed via Pi SDK's Bash tool can find bundled and user-installed executables.
       await enrichProcessPathForBuild();
 
-      const bashOptions: BashToolOptions | undefined =
-        process.platform === 'win32' ? { operations: createWindowsBashOperations() } : undefined;
-      const codingTools = createCodingTools(
-        effectiveCwd,
-        bashOptions ? { bash: bashOptions } : undefined
-      );
+      const codingTools = buildCoworkCodingTools(effectiveCwd);
 
       // Inject a default 120s timeout for bash commands when the model omits one
       const withTimeout = CoworkAgentRunner.wrapBashToolWithDefaultTimeout(
@@ -2291,7 +2265,7 @@ Tool routing:
           thinkingLevel,
           authStorage,
           modelRegistry,
-          tools: wrappedTools as unknown as ReturnType<typeof createCodingTools>,
+          tools: wrappedTools as unknown as ReturnType<typeof buildCoworkCodingTools>,
           customTools,
           sessionManager: PiSessionManager.inMemory(),
           settingsManager: PiSettingsManager.inMemory({

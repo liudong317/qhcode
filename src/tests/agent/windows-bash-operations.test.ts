@@ -6,6 +6,8 @@ import type { ChildProcess, SpawnOptions } from 'child_process';
 import {
   buildWindowsShellInvocation,
   createWindowsBashOperations,
+  mergeWindowsShellEnv,
+  resolveWindowsCmdPath,
 } from '../../main/agent/windows-bash-operations';
 
 class FakeChildProcess extends EventEmitter {
@@ -81,14 +83,17 @@ describe('windows bash operations', () => {
     await expect(promise).resolves.toEqual({ exitCode: 0 });
     expect(onData).toHaveBeenCalledWith(output);
     expect(spawnProcess).toHaveBeenCalledWith(
-      'C:\\Windows\\System32\\cmd.exe',
+      resolveWindowsCmdPath(),
       ['/d', '/s', '/c', 'echo hello'],
       expect.objectContaining({
         cwd: process.cwd(),
         detached: false,
-        env: { PATH: 'test-path' },
+        env: expect.objectContaining({
+          PATH: 'test-path',
+        }),
         stdio: ['ignore', 'pipe', 'pipe'],
         windowsHide: true,
+        windowsVerbatimArguments: true,
       })
     );
   });
@@ -148,5 +153,13 @@ describe('windows bash operations', () => {
       })
     ).rejects.toThrow('Working directory does not exist');
     expect(spawnProcess).not.toHaveBeenCalled();
+  });
+
+  it('fills Windows system env when the caller passes a stripped env', () => {
+    const merged = mergeWindowsShellEnv({ PATH: 'only-path' });
+    expect(merged.PATH).toBe('only-path');
+    expect(merged.SystemRoot || merged.SYSTEMROOT).toBeTruthy();
+    expect(merged.ComSpec || merged.COMSPEC).toBeTruthy();
+    expect(resolveWindowsCmdPath().toLowerCase()).toContain('cmd.exe');
   });
 });

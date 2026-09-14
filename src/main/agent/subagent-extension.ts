@@ -3,7 +3,6 @@ import {
   createAgentSession,
   SessionManager as PiSessionManager,
   SettingsManager as PiSettingsManager,
-  createCodingTools,
   DefaultResourceLoader,
   type ToolDefinition,
 } from '@mariozechner/pi-coding-agent';
@@ -18,6 +17,7 @@ import { MCPManager } from '../mcp/mcp-manager';
 import { configStore } from '../config/config-store';
 import { log, logError } from '../utils/logger';
 import { resolvePiRegistryModel, resolvePiRouteProtocol } from './pi-model-resolution';
+import { buildCoworkCodingTools } from './coding-tools';
 import type { ServerEvent } from '../../renderer/types';
 import { v4 as uuidv4 } from 'uuid';
 
@@ -240,7 +240,7 @@ function createSpawnSubagentTool(
         }
 
         const cwd = config.defaultWorkdir || process.cwd();
-        const codingTools = createCodingTools(cwd);
+        const codingTools = buildCoworkCodingTools(cwd);
 
         const childSystemPrompt = buildChildSystemPrompt(task, result_format);
         const resourceLoader = new DefaultResourceLoader({
